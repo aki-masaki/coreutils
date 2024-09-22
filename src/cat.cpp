@@ -23,4 +23,6 @@ int main(int argc, char **argv) {
     ;
 
   std::cout << stream.str();
+
+  file.close();
 }
