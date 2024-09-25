@@ -86,3 +86,18 @@ std::unordered_map<std::string, option> *Args::get_real_options() {
 int Args::get_options_length() { return this->options->size(); }
 
 int Args::get_option_index_span() { return this->option_index_span; }
+
+bool Args::is_option_present(std::string name) {
+  auto found_option = this->real_options->find(name);
+
+  return found_option != this->real_options->end();
+}
+
+std::string Args::get_option_value(std::string name) {
+  auto found_option = this->real_options->find(name);
+
+  if (found_option == this->real_options->end())
+    return *new std::string("");
+
+  return found_option->second.value;
+}

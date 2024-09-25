@@ -26,6 +26,10 @@ int main(int argc, char **argv) {
 
   Args *args = init_args(argc, argv);
 
+  if (args->is_option_present("h")) {
+    std::cout << "Help called???" << std::endl << std::endl;
+  }
+
   if (argc - args->get_option_index_span() > 1) {
     dir_path = argv[args->get_option_index_span() + 1];
 

@@ -34,4 +34,7 @@ public:
   int get_option_index_span();
 
   void declare_option(std::string, ArgType);
+
+  bool is_option_present(std::string);
+  std::string get_option_value(std::string);
 };
