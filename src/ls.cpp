@@ -9,18 +9,22 @@
 
 #define RESET_COLOR "\033[0m"
 
-int main(int argc, char **argv) {
-  std::string dir_path;
-
+Args *init_args(int argc, char **argv) {
   Args *args = new Args(argc, argv);
 
-  args->declare_option((char *) "-h", ArgType::Bool);
-  args->declare_option((char *) "-d", ArgType::String);
+  args->declare_option((char *) "h", ArgType::Bool);
+  args->declare_option((char *) "d", ArgType::String);
+  args->declare_option((char *) "--help", ArgType::String);
 
   args->read();
 
-  for (auto it : *args->get_real_options())
-    std::cout << it.first << " " << it.second.value << std::endl;
+  return args;
+}
+
+int main(int argc, char **argv) {
+  std::string dir_path;
+
+  Args *args = init_args(argc, argv);
 
   if (argc - args->get_option_index_span() > 1) {
     dir_path = argv[args->get_option_index_span() + 1];

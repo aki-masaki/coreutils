@@ -15,7 +15,8 @@ Args::Args(int argc, char **argv) {
 
 void Args::read() {
   for (int i = 1; i < this->argc; i++) {
-    if (this->argv[i][0] == '-') {
+    // --long
+    if (this->argv[i][0] == '-' && this->argv[i][1] == '-') {
       auto found_option = this->options->find(this->argv[i]);
       option *option;
 
@@ -35,6 +36,35 @@ void Args::read() {
       }
 
       this->real_options->insert_or_assign(option->name, *option);
+    }
+    // -s, which means multiple options can be nested in the same -
+    // e.g., -lah
+    else if (this->argv[i][0] == '-') {
+      for (char c : *new std::string(this->argv[i])) {
+        std::string *char_string = new std::string(1, c);
+
+        if (c == '-')
+          continue;
+
+        this->option_index_span++;
+
+        auto found_option = this->options->find(*char_string);
+
+        option *option;
+
+        if (found_option == NULL)
+          continue;
+
+        option = &found_option->second;
+
+        if (option->type == ArgType::String && i != this->argc - 1 &&
+            this->argv[i + 1][0] != '-')
+          option->value.assign(argv[i + 1]);
+        else
+          option->value.assign("true");
+
+        this->real_options->insert_or_assign(*char_string, *option);
+      }
     }
   }
 }
