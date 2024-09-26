@@ -59,7 +59,10 @@ int main(int argc, char **argv) {
   }
 
   for (const auto & dir : dirs) {
-    std::cout << RED_FG << "\u{f024b} " << RESET_COLOR << dir << std::endl;
+    if (!std::filesystem::is_empty(dir))
+      std::cout << RED_FG << "\u{f024b} " << RESET_COLOR << dir << std::endl;
+    else
+      std::cout << RED_FG << "\u{f0256} " << RESET_COLOR << dir << std::endl;
   }
 
   for (const auto & file : files) {
