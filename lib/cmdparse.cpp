@@ -1,7 +1,6 @@
 #include "./cmdparse.hpp"
 #include <cstdlib>
 #include <cstring>
-#include <iostream>
 
 Args::Args(int argc, char **argv) {
   this->count = argc - 1;
@@ -43,10 +42,11 @@ void Args::read() {
       for (char c : *new std::string(this->argv[i])) {
         std::string *char_string = new std::string(1, c);
 
-        if (c == '-')
-          continue;
+        if (c == '-') {
+          this->option_index_span++;
 
-        this->option_index_span++;
+          continue;
+        }
 
         auto found_option = this->options->find(*char_string);
 
@@ -57,8 +57,8 @@ void Args::read() {
 
         option = &found_option->second;
 
-        if (option->type == ArgType::String && i != this->argc - 1 &&
-            this->argv[i + 1][0] != '-')
+        if (sizeof(this->argv[i]) == 2 && option->type == ArgType::String &&
+            i != this->argc - 1 && this->argv[i + 1][0] != '-')
           option->value.assign(argv[i + 1]);
         else
           option->value.assign("true");
