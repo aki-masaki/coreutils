@@ -7,9 +7,12 @@ enum ArgType {
 };
 
 struct option {
-  std::string name;
+  std::string short_name;
+  std::string long_name;
   std::string value;
+  std::string description;
   ArgType type;
+  bool required;
 };
 
 class Args {
@@ -33,7 +36,7 @@ public:
 
   int get_option_index_span();
 
-  void declare_option(std::string, ArgType);
+  void declare_option(std::string, std::string, ArgType, bool);
 
   bool is_option_present(std::string);
   std::string get_option_value(std::string);

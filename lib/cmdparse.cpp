@@ -1,6 +1,7 @@
 #include "./cmdparse.hpp"
 #include <cstdlib>
 #include <cstring>
+#include <iostream>
 
 Args::Args(int argc, char **argv) {
   this->count = argc - 1;
@@ -13,28 +14,33 @@ Args::Args(int argc, char **argv) {
 }
 
 void Args::read() {
+  option *found_option;
+  std::string arg;
+
   for (int i = 1; i < this->argc; i++) {
     // --long
     if (this->argv[i][0] == '-' && this->argv[i][1] == '-') {
-      auto found_option = this->options->find(this->argv[i]);
-      option *option;
+      arg = *new std::string(this->argv[i]);
+
+      for (auto option : *this->options)
+        if (option.second.long_name == arg.substr(2))
+          found_option = &option.second;
 
       if (found_option == NULL)
         continue;
 
-      option = &found_option->second;
-
-      if (option->type == ArgType::String && i != this->argc - 1 &&
+      if (found_option->type == ArgType::String && i != this->argc - 1 &&
           this->argv[i + 1][0] != '-') {
-        option->value.assign(argv[i + 1]);
+        found_option->value.assign(argv[i + 1]);
 
         this->option_index_span += 2;
       } else {
-        option->value.assign("true");
+        found_option->value.assign("true");
         this->option_index_span++;
       }
 
-      this->real_options->insert_or_assign(option->name, *option);
+      this->real_options->insert_or_assign(found_option->short_name,
+                                           *found_option);
     }
     // -s, which means multiple options can be nested in the same -
     // e.g., -lah
@@ -69,10 +75,15 @@ void Args::read() {
   }
 }
 
-void Args::declare_option(std::string name, ArgType type) {
-  option option = {.name = name, .value = (char *)malloc(0), .type = type};
+void Args::declare_option(std::string short_name, std::string long_name,
+                          ArgType type, bool required) {
+  option option = {.short_name = short_name,
+                   .long_name = long_name,
+                   .value = (char *)malloc(0),
+                   .type = type,
+                   .required = required};
 
-  this->options->insert_or_assign(name, option);
+  this->options->insert_or_assign(short_name, option);
 }
 
 std::unordered_map<std::string, option> *Args::get_options() {

@@ -12,8 +12,7 @@
 Args *init_args(int argc, char **argv) {
   Args *args = new Args(argc, argv);
 
-  args->declare_option((char *) "h", ArgType::Bool);
-  args->declare_option((char *) "--help", ArgType::Bool);
+  args->declare_option("h", "help", ArgType::Bool, false);
 
   args->read();
 
@@ -25,7 +24,7 @@ int main(int argc, char **argv) {
 
   Args *args = init_args(argc, argv);
 
-  if (args->is_option_present("h") || args->is_option_present("--help")) {
+  if (args->is_option_present("h")) {
     std::cout << "Help called???" << std::endl << std::endl;
 
     return 0;
