@@ -1,7 +1,6 @@
 #include "./cmdparse.hpp"
 #include <cstdlib>
 #include <cstring>
-#include <iostream>
 
 Args::Args(int argc, char **argv) {
   this->count = argc - 1;
@@ -76,10 +75,12 @@ void Args::read() {
 }
 
 void Args::declare_option(std::string short_name, std::string long_name,
-                          ArgType type, bool required) {
+                          ArgType type, bool required,
+                          std::string description) {
   option option = {.short_name = short_name,
                    .long_name = long_name,
                    .value = (char *)malloc(0),
+                   .description = description,
                    .type = type,
                    .required = required};
 
@@ -111,4 +112,28 @@ std::string Args::get_option_value(std::string name) {
     return *new std::string("");
 
   return found_option->second.value;
+}
+
+std::string Args::generate_help() {
+  std::string help = *new std::string();
+
+  for (auto option : *this->options) {
+    help.append("-");
+    help.append(option.second.short_name);
+
+    if (option.second.long_name != "") {
+      help.append(", --");
+      help.append(option.second.long_name);
+    }
+
+    help.append("\n    ");
+    help.append(option.second.description);
+
+    help.append("\n\n");
+  }
+
+  // Remove the last newline added after the last option
+  help.pop_back();
+
+  return help;
 }
