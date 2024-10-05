@@ -26,3 +26,5 @@ $(LIB_DIR)/%.o: $(LIB_DIR)/%.cpp
 clean:
 	rm -f $(OUT_DIR)/* $(LIB_DIR)/*.o
 
+install:
+		cp -f $(OUT_DIR)/* /usr/bin/
