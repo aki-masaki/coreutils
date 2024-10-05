@@ -10,6 +10,7 @@ Args::Args(int argc, char **argv) {
   this->argc = argc;
   this->argv = argv;
   this->option_index_span = 0;
+  this->error = *new std::string("");
 }
 
 void Args::read() {
@@ -25,8 +26,11 @@ void Args::read() {
         if (option.second.long_name == arg.substr(2))
           found_option = &option.second;
 
-      if (found_option == NULL)
-        continue;
+      if (found_option == NULL) {
+        this->error.assign("invalid option: " + arg);
+
+        return;
+      }
 
       if (found_option->type == ArgType::String && i != this->argc - 1 &&
           this->argv[i + 1][0] != '-') {
@@ -57,8 +61,11 @@ void Args::read() {
 
         option *option;
 
-        if (found_option == NULL)
-          continue;
+        if (found_option == NULL) {
+          this->error.assign("invalid option: " + *char_string);
+
+          return;
+        }
 
         option = &found_option->second;
 
@@ -136,4 +143,8 @@ std::string Args::generate_help() {
   help.pop_back();
 
   return help;
+}
+
+std::string Args::get_error() {
+  return this->error;
 }

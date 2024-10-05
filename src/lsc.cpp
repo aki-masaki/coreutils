@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
 
   Args *args = init_args(argc, argv);
 
-  if (args->is_option_present("h")) {
+  if (argc == 1 || args->is_option_present("h")) {
     std::cout << "Usage: lsc [option] ... [dir]\n";
     std::cout << "List files in [dir] (defaults to .)\n\n";
 
@@ -72,14 +72,13 @@ int main(int argc, char **argv) {
   }
 
   for (const auto & dir : dirs) {
-
     if (args->is_option_present("p"))
       std::cout << dir << std::endl;
     else if (dir == ".")
       std::cout << RED_FG << "c  " << RESET_COLOR << dir << std::endl;
     else if (dir == "..")
       std::cout << RED_FG << "p  " << RESET_COLOR << dir << std::endl;
-    else if (!std::filesystem::is_empty(dir))
+    else if (!std::filesystem::is_empty(dir_path + "/" + dir))
       std::cout << RED_FG << "d  " << RESET_COLOR << dir << std::endl;
     else
       std::cout << RED_FG << "de " << RESET_COLOR << dir << std::endl;

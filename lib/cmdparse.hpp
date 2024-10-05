@@ -24,6 +24,7 @@ private:
   int argc;
   char **argv;
   int option_index_span;
+  std::string error;
 public:
   Args(int, char **);
   ~Args();
@@ -42,4 +43,5 @@ public:
   std::string get_option_value(std::string);
 
   std::string generate_help();
+  std::string get_error();
 };
